@@ -11,12 +11,12 @@ class PowerSource
 {
   public:
     PowerSource(int pin,int analogPin);
-  private:
-    int _pin;
-    int _analogPin;
     float rawVoltage();
     void enable ();
     void disable ();
+  private:
+    int _pin;
+    int _analogPin;
 };
 
 #endif

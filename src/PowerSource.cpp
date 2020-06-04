@@ -9,12 +9,12 @@ PowerSource::PowerSource(int pin,int analogPin)
 {
   pinMode(pin, OUTPUT);
   _pin = pin;
-  analogPin = analogPin;
+  _analogPin = analogPin;
 }
 
 float PowerSource::rawVoltage()
 {
-  return analogRead(analogPin);
+  return analogRead(_analogPin);
 }
 
 void PowerSource::enable()

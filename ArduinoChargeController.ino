@@ -19,12 +19,18 @@ LED Red(13);
 LED Blue(12);
 OUTPUTS Buzzer(9);
 OUTPUTS Fan(10);
-PowerSource Battery(A1, 8);
-PowerSource SolarPanel(A2, A0);
+PowerSource Battery(8,A1);
+PowerSource SolarPanel(A0,A2);
+
+/* Configurations */
+const float BatteryMultiplier = 3.006 ;//(98.5 + 49.1)  49.1;Voltage Divider Multiplier for Battery
+const float PanelMultiplier = (99.45 + 4.9) / 4.9; //Voltage Divider Multiplier for Battery
 
 void setup() {
+  Serial.begin(9600);
 }
 
 void loop() {
-
+//  Serial.println((Battery.rawVoltage()*BatteryMultiplier*(5.0/1024.0)));
+  delay(100);
 }
