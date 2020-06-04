@@ -11,12 +11,16 @@
 
 #include "src/LED.h"
 #include "src/OUTPUTS.h"
+#include "src/PowerSource.h"
+
 
 /* PIN INITIALISATION */
 LED Red(13);
 LED Blue(12);
-OUTPUTS BUZZER(9);
-OUTPUTS FAN(10);
+OUTPUTS Buzzer(9);
+OUTPUTS Fan(10);
+PowerSource Battery(A1, 8);
+PowerSource SolarPanel(A2, A0);
 
 void setup() {
 }
