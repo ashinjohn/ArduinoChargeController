@@ -19,15 +19,15 @@ LED Red(13);
 LED Blue(12);
 OUTPUTS Buzzer(9);
 OUTPUTS Fan(10);
-PowerSource Battery(8,A1);
-PowerSource SolarPanel(A0,A2);
+PowerSource Battery(8, A1);
+PowerSource SolarPanel(A0, A2);
 
 /* Configurations */
 const float BatteryMultiplier = 3.006; //(98.5 + 49.1)*49.1  Voltage Divider Multiplier for Battery
 const float PanelMultiplier = 6.0482;  //(99.45 +19.7) Voltage Divider Multiplier for Battery
-volatile float BatteryVoltage=0;
-volatile float PanelVoltage=0;
-
+volatile float BatteryVoltage = 0;
+volatile float PanelVoltage = 0;
+const bool debug = true;
 
 void setup() {
   Serial.begin(9600);
@@ -38,34 +38,35 @@ void setup() {
 }
 
 void loop() {
-/*
-  BatteryVoltage=Battery.rawVoltage()*BatteryMultiplier*(5.0/1024.0);
-  Serial.print("BatteryVoltage = ");
-  Serial.println(BatteryVoltage);
-  delay(100);
 
-  PanelVoltage=SolarPanel.rawVoltage()*PanelMultiplier*(5.0/1024.0);
-  Serial.print("PanelVoltage = ");
-  Serial.println(PanelVoltage);
-  delay(100);
-*/
+Battery.enable();
+  
+  /*
+    BatteryVoltage=Battery.rawVoltage()*BatteryMultiplier*(5.0/1024.0);
+    if (debug==true){  Serial.print("BatteryVoltage = ");Serial.println(BatteryVoltage);}
+    delay(100);
 
-/*
-  if(PanelVoltage>BatteryVoltage)
-  {
-/floatdisable ie. Enable Constant current charging
-//enable solar 
-//
-//check for constant current. ie start timer for constant current
+    PanelVoltage=SolarPanel.rawVoltage()*PanelMultiplier*(5.0/1024.0);
+    if (debug==true){  Serial.print("PanelVoltage = "); Serial.println(PanelVoltage);}
+    delay(100);
+  */
 
-//if constant voltage . ie start timer for constant current
+  /*
+    if(PanelVoltage>BatteryVoltage)
+    {
+    /floatdisable ie. Enable Constant current charging
+    //enable solar
+    //
+    //check for constant current. ie start timer for constant current
 
-//else float
-    
-    }
-else
-disablesolar
-disablebattery
-    
-*/    
+    //if constant voltage . ie start timer for constant current
+
+    //else float
+
+      }
+    else
+    disablesolar
+    disablebattery
+
+  */
 }

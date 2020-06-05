@@ -19,12 +19,12 @@ float PowerSource::rawVoltage()
 
 void PowerSource::enable()
 {
-  digitalWrite(_pin, HIGH);
+  digitalWrite(_pin, LOW);
   delay(250);
 }
 
 void PowerSource::disable()
 {
-  digitalWrite(_pin, LOW);
+  digitalWrite(_pin, HIGH);
   delay(250);
 }
