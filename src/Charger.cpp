@@ -1,5 +1,5 @@
 /*
-  Charger.cpp - Library for Charger Mode Detection and Float Mode
+  Charger.cpp - Library for Charger Mode Detection (CC/CV) and Float Charge 
   Created by abjohn.  June 3, 2020.
 */
 #include "Arduino.h"
@@ -9,8 +9,8 @@ Charger::Charger(int inPin,int outPin)
 {
   pinMode(inPin, INPUT);
   pinMode(outPin, OUTPUT);
-  _pin = pin;
-  _analogPin = analogPin;
+  _inPin = inPin;
+  _outPin = outPin;
 }
 
 int Charger::constantCurrent()
@@ -24,7 +24,7 @@ void Charger::floatEnable()
   delay(250);
 }
 
-void Charger::FloatDisable()
+void Charger::floatDisable()
 {
   digitalWrite(_outPin, LOW);
   delay(250);

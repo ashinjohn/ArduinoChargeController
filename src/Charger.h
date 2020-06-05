@@ -10,7 +10,7 @@
 class Charger
 {
   public:
-    PowerSource(int inPin,int outPin);
+    Charger(int inPin,int outPin);
     int constantCurrent();
     void floatEnable ();
     void floatDisable ();
