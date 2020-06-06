@@ -12,6 +12,7 @@
 #include "src/LED.h"
 #include "src/OUTPUTS.h"
 #include "src/PowerSource.h"
+#include "src/Charger.h"
 
 
 /* PIN INITIALISATION */
@@ -21,13 +22,15 @@ OUTPUTS Buzzer(9);
 OUTPUTS Fan(10);
 PowerSource Battery(8, A1);
 PowerSource SolarPanel(A0, A2);
-
+Charger Charger(A3,11);
+  
 /* Configurations */
 const float BatteryMultiplier = 3.006; //(98.5 + 49.1)*49.1  Voltage Divider Multiplier for Battery
 const float PanelMultiplier = 6.0482;  //(99.45 +19.7) Voltage Divider Multiplier for Battery
 volatile float BatteryVoltage = 0;
 volatile float PanelVoltage = 0;
 const bool debug = true;
+int BatteryState=0; // 0 - Discharged, 1 - Constant Current,  2- Constant Voltage , 3 - Float Charge 
 
 void setup() {
   Serial.begin(9600);
@@ -38,9 +41,27 @@ void setup() {
 }
 
 void loop() {
-
+SolarPanel.enable();
+/*
+Charger.floatDisable(); 
+Battery.disable();
+delay(3000);
+Red.blinkfast();
 Battery.enable();
-  
+delay(3000);
+Red.blinkfast();
+*/
+Battery.enable();
+
+Charger.floatEnable();  // needs to check transistor
+delay(3000);
+Red.blinkfast();
+Charger.floatDisable();  // needs to check transistor
+delay(3000);
+Red.blinkfast();
+
+Serial.println(Charger.constantCurrent());
+
   /*
     BatteryVoltage=Battery.rawVoltage()*BatteryMultiplier*(5.0/1024.0);
     if (debug==true){  Serial.print("BatteryVoltage = ");Serial.println(BatteryVoltage);}

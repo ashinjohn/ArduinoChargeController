@@ -7,8 +7,9 @@
 
 Charger::Charger(int inPin,int outPin)
 {
-  pinMode(inPin, INPUT);
+  //pinMode(inPin, INPUT);
   pinMode(outPin, OUTPUT);
+  pinMode(inPin, INPUT_PULLUP);
   _inPin = inPin;
   _outPin = outPin;
 }
