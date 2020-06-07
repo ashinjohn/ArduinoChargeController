@@ -13,6 +13,7 @@ class OUTPUTS
     OUTPUTS(int pin);
     void on();
     void off();
+    void beep();
   private:
     int _pin;
 };

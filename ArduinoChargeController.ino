@@ -22,76 +22,122 @@ OUTPUTS Buzzer(9);
 OUTPUTS Fan(10);
 PowerSource Battery(8, A1);
 PowerSource SolarPanel(A0, A2);
-Charger Charger(A3,11);
-  
+Charger Charger(A3, 11);
+
 /* Configurations */
-const float BatteryMultiplier = 3.006; //(98.5 + 49.1)*49.1  Voltage Divider Multiplier for Battery
-const float PanelMultiplier = 6.0482;  //(99.45 +19.7) Voltage Divider Multiplier for Battery
+const float BatteryMultiplier = 3.056; //(98.5 + 49.1)*49.1 =3.006 Voltage Divider Multiplier for Battery
+const float PanelMultiplier = 6.1182;  //(99.45 +19.7) =6.0482 Voltage Divider Multiplier for Battery
 volatile float BatteryVoltage = 0;
 volatile float PanelVoltage = 0;
 const bool debug = true;
-int BatteryState=0; // 0 - Discharged, 1 - Constant Current,  2- Constant Voltage , 3 - Float Charge 
-float BatteryTooLow = 11.00; // ( Beep to indicate Battery Low)
-float BatteryReconnect = 11.7; //11.6 (Exact Value)
-float BatteryFloat = 13.6; //13.8 (Exact Value)
-float BatteryAbsorb = 14.2; //14.4 (Exact Value)
+int BatteryState = 0; // 0 - Discharged, 1 - Constant Current,  2- Constant Voltage , 3 - Float Charge
+const float BatteryTooLow = 11.00; // ( Beep to indicate Battery Low)
+const float BatteryReconnect = 11.6;
+const float BatteryFloatMax = 13.8; //13.6 (Exact Value)
+const float BatteryAbsorbMax = 15; //14.4 (Exact Value)
+const float PanelMin = 15.0;
+const float PanelMax = 24.0;
+
+const float BatteryMin = 13.0;
+
+int faultcount = 0;
+
+void fault() {
+  //faultcount++;
+  Buzzer.on();
+  SolarPanel.disable();
+  Fan.on();
+  Red.blinkfast();
+  Serial.print("Fault");
+}
 
 void setup() {
   Serial.begin(9600);
-  //batterydisable
+  //batterydisable (feature removed in hardware)
   //solardisable
   //fandisable
   //buzzerdisable
+  //floatenable // to keep battery safe
 }
 
 void loop() {
-SolarPanel.enable();
-/*
-Charger.floatDisable(); 
-Battery.disable();
-delay(3000);
-Red.blinkfast();
-Battery.enable();
-delay(3000);
-Red.blinkfast();
-*/
-Battery.enable();
+  BatteryVoltage = Battery.rawVoltage() * (5.0 / 1024.0) * BatteryMultiplier;//;
 
-Charger.floatEnable();  // needs to check transistor
-delay(3000);
-Red.blinkfast();
-Charger.floatDisable();  // needs to check transistor
-delay(3000);
-Red.blinkfast();
+  if (debug == true) {
+    Serial.print("BatteryVoltage = ");
+    Serial.println(BatteryVoltage);
+  }
 
-Serial.println(Charger.constantCurrent());
+  if (BatteryVoltage > BatteryAbsorbMax || BatteryVoltage < 10) { //False Triggering in startup needs to check
+    fault();
+  }
 
-  /*
-    BatteryVoltage=Battery.rawVoltage()*BatteryMultiplier*(5.0/1024.0);
-    if (debug==true){  Serial.print("BatteryVoltage = ");Serial.println(BatteryVoltage);}
-    delay(100);
+  delay(100);
 
-    PanelVoltage=SolarPanel.rawVoltage()*PanelMultiplier*(5.0/1024.0);
-    if (debug==true){  Serial.print("PanelVoltage = "); Serial.println(PanelVoltage);}
-    delay(100);
-  */
+  PanelVoltage = SolarPanel.rawVoltage() * PanelMultiplier * (5.0 / 1024.0);
+  if (debug == true) {
+    Serial.print("PanelVoltage = ");
+    Serial.println(PanelVoltage);
+  }
+  delay(50);
 
-  /*
-    if(PanelVoltage>BatteryVoltage)
-    {
-    /floatdisable ie. Enable Constant current charging
-    //enable solar
-    //
-    //check for constant current. ie start timer for constant current
+  if (BatteryVoltage <= BatteryMin ) {
+    BatteryState = 0; //Discharged
+    if (debug == true) {
+      Serial.println("Battery Dicharging");
+    }
+  }
 
-    //if constant voltage . ie start timer for constant current
+  if (PanelVoltage >= PanelMin && PanelVoltage <= PanelMax)  {
 
-    //else float
+    if (debug == true) {
+      Serial.println("Panel Voltage Good");
+    }
 
+    if ( BatteryState <= 1 && Charger.constantCurrent() == 1) {
+      BatteryState = 1; //Constant Current
+      Charger.floatDisable();
+      Serial.println("Bulk Charging in progress");
+      if (BatteryVoltage > BatteryAbsorbMax)
+      {
+        Serial.println("Bulk Charging Voltage Higer than Expected");
+        Buzzer.beep();
+        Red.blinkfast();
       }
-    else
-    disablesolar
-    disablebattery
+    }
+    else if ( BatteryState <= 2 && Charger.constantCurrent() == 0) { // or timer for constant current ranout
+      BatteryState = 2; //Constant Voltage
+      Charger.floatDisable();
+      Serial.println("Absorbtion Charging in progress");
+      if (BatteryVoltage > BatteryAbsorbMax)
+      {
+        Serial.println("Bulk Charging Voltage Higer than Expected");
+        Buzzer.beep();
+        Red.blinkfast();
+      }
+    }
 
-  */
+    else if ( BatteryState <= 3 ) { // or timer for constant voltage ranout
+      BatteryState = 3; //Float Charge
+      Charger.floatEnable();
+      Serial.println("Float Charging in progress");
+      if (BatteryVoltage > BatteryFloatMax)
+      {
+        Serial.println("Bulk Charging Voltage Higer than Expected");
+        Buzzer.beep();
+        Red.blinkfast();
+      }
+
+    }
+    else {
+      Serial.println("No Charging Cycle in progress");
+    }
+
+  }
+  else {
+    if (debug == true) {
+      Serial.println("Panel Voltage Low or Disconnected");
+    }
+    SolarPanel.disable();
+  }
 }

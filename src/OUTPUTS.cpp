@@ -22,3 +22,11 @@ void OUTPUTS::off()
   digitalWrite(_pin, LOW);
   delay(250);
 }
+
+void OUTPUTS::beep()
+{
+  digitalWrite(_pin, HIGH);
+  delay(100);
+  digitalWrite(_pin, LOW);
+  delay(100);
+}
