@@ -31,6 +31,10 @@ volatile float BatteryVoltage = 0;
 volatile float PanelVoltage = 0;
 const bool debug = true;
 int BatteryState=0; // 0 - Discharged, 1 - Constant Current,  2- Constant Voltage , 3 - Float Charge 
+float BatteryTooLow = 11.00; // ( Beep to indicate Battery Low)
+float BatteryReconnect = 11.7; //11.6 (Exact Value)
+float BatteryFloat = 13.6; //13.8 (Exact Value)
+float BatteryAbsorb = 14.2; //14.4 (Exact Value)
 
 void setup() {
   Serial.begin(9600);
