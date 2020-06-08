@@ -29,7 +29,7 @@ const float BatteryMultiplier = 3.056; //(98.5 + 49.1)*49.1 =3.006 Voltage Divid
 const float PanelMultiplier = 6.1182;  //(99.45 +19.7) =6.0482 Voltage Divider Multiplier for Battery
 volatile float BatteryVoltage = 0;
 volatile float PanelVoltage = 0;
-const bool debug = false;
+const bool debug = true;
 int BatteryState = 0; // 0 - Discharged, 1 - Constant Current,  2- Constant Voltage , 3 - Float Charge
 const float BatteryTooLow = 11.00; // ( Beep to indicate Battery Low)
 const float BatteryReconnect = 11.6;
@@ -112,7 +112,9 @@ void loop() {
     }
   }
 
-  if (PanelVoltage >= PanelMin && PanelVoltage <= PanelMax)  {
+  //  if (PanelVoltage >= PanelMin && PanelVoltage <= PanelMax)  {
+  if (PanelVoltage >= BatteryVoltage)  {
+
     SolarPanel.enable();
     if (debug == true) {
       Serial.println("Panel Voltage Good");
@@ -126,12 +128,11 @@ void loop() {
       Blue.blinkfast();
       Fan.on();
 
-      /*      if ( Charger.constantCurrent() == 0) {
-              BatteryState = 2; //Constant Voltage
-              Serial.println("Bulk Charging completed as charger changed to CV mode");
-            }
-            else */
-      if ( CheckTimer(3600L) == true) {   //Time in seconds
+      if ( Charger.constantCurrent() == 0) { // Disable loop if no proper load connected
+        BatteryState = 2; //Constant Voltage
+        Serial.println("Bulk Charging completed as charger changed to CV mode");
+      }
+      else if ( CheckTimer(1800) == true) {   //Time in seconds
         BatteryState = 2; //Constant Voltage
         Serial.println("Bulk Charging ended by Plateu Timer");
       }
@@ -156,7 +157,7 @@ void loop() {
       Blue.blinkslow();
       Fan.fade();
 
-      if ( CheckTimer(3600L) == true) {    //Timer for Absorbtion Charge Termination is seconds
+      if ( CheckTimer(1800) == true) {    //Timer for Absorbtion Charge Termination is seconds
         BatteryState = 3; //Float Charging
         Serial.println("Absorbtion Charging ended by Timer");
       }
