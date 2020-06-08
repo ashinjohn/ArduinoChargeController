@@ -14,6 +14,7 @@ class OUTPUTS
     void on();
     void off();
     void beep();
+    void fade();
   private:
     int _pin;
 };

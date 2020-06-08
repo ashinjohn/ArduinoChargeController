@@ -14,13 +14,13 @@ OUTPUTS::OUTPUTS(int pin)
 void OUTPUTS::on()
 {
   digitalWrite(_pin, HIGH);
-  delay(250);
+  delay(50);
 }
 
 void OUTPUTS::off()
 {
   digitalWrite(_pin, LOW);
-  delay(250);
+  delay(50);
 }
 
 void OUTPUTS::beep()
@@ -29,4 +29,10 @@ void OUTPUTS::beep()
   delay(100);
   digitalWrite(_pin, LOW);
   delay(100);
+}
+
+void OUTPUTS::fade()
+{
+  analogWrite(_pin, 120);
+  delay(50);
 }
