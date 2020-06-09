@@ -121,10 +121,10 @@ void loop() {
     }
 
     /*  Constant Current Charging */
-    if ( BatteryState <= 1 ) {
+    if ( BatteryState <= 1 || Charger.constantCurrent() == 1) {
       BatteryState = 1; //Constant Current
       Charger.floatDisable();
-      StartTimer();
+      //StartTimer();
       Blue.blinkfast();
       Fan.on();
 
@@ -132,10 +132,12 @@ void loop() {
         BatteryState = 2; //Constant Voltage
         Serial.println("Bulk Charging completed as charger changed to CV mode");
       }
+      /*
       else if ( CheckTimer(1800) == true) {   //Time in seconds
         BatteryState = 2; //Constant Voltage
         Serial.println("Bulk Charging ended by Plateu Timer");
       }
+      */
       else {
         Serial.println("Bulk Charging in progress");
       }
