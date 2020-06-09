@@ -102,7 +102,7 @@ void loop() {
   }
   delay(50);
 
-  if (BatteryVoltage > BatteryAbsorbMax || BatteryVoltage < 10) {
+  if (BatteryVoltage > BatteryAbsorbMax+0.5 || BatteryVoltage < 10) {// The offset can be removed if serial port connected
     fault(); // Solar Disconnect, Fan On , Buzzer On
   }
   else if (BatteryVoltage <= BatteryMin ) {
@@ -113,7 +113,7 @@ void loop() {
   }
 
   //  if (PanelVoltage >= PanelMin && PanelVoltage <= PanelMax)  {
-  if (PanelVoltage >= BatteryVoltage)  {
+  if (PanelVoltage >= BatteryVoltage+0.25)  { // The offset can be reduced to 0.10V if serial port connected
 
     SolarPanel.enable();
     if (debug == true) {
