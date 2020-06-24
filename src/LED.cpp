@@ -26,15 +26,15 @@ void LED::off()
 void LED::blinkfast()
 {
   digitalWrite(_pin, HIGH);
-  delay(50);
+  delay(10);
   digitalWrite(_pin, LOW);
-  delay(50);
+  delay(10);
 }
 
 void LED::blinkslow()
 {
   digitalWrite(_pin, HIGH);
-  delay(250);
+  delay(300);
   digitalWrite(_pin, LOW);
-  delay(250);
+  delay(300);
 }
